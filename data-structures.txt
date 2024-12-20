@@ -1,0 +1,136 @@
+RECIPE-BOX DATA STRUCTURES
+
+1. USER SCHEMA
+   {
+     _id: ObjectId,
+     email: String (required, unique),
+     password: String (hashed, required),
+     name: String,
+     createdAt: Date,
+     updatedAt: Date,
+     preferences: {
+       measurementUnit: String (metric/imperial),
+       theme: String,
+       notifications: {
+         lowStock: Boolean,
+         expiryWarning: Boolean
+       }
+     }
+   }
+
+2. RECIPE SCHEMA
+   {
+     _id: ObjectId,
+     userId: ObjectId (ref: 'User'),
+     name: String (required),
+     description: String,
+     servings: Number,
+     prepTime: Number (minutes),
+     cookTime: Number (minutes),
+     difficulty: String (enum: ['easy', 'medium', 'hard']),
+     ingredients: [{
+       item: ObjectId (ref: 'Ingredient'),
+       amount: Number,
+       unit: String,
+       notes: String
+     }],
+     steps: [{
+       order: Number,
+       description: String,
+       timer: Number (optional, minutes)
+     }],
+     categories: [String],
+     tags: [String],
+     image: String (URL),
+     rating: Number,
+     favorite: Boolean,
+     createdAt: Date,
+     updatedAt: Date
+   }
+
+3. INGREDIENT SCHEMA
+   {
+     _id: ObjectId,
+     name: String (required),
+     category: String,
+     defaultUnit: String,
+     alternativeUnits: [String],
+     nutritionalInfo: {
+       calories: Number,
+       protein: Number,
+       carbs: Number,
+       fat: Number
+     },
+     createdAt: Date,
+     updatedAt: Date
+   }
+
+4. STOCK SCHEMA
+   {
+     _id: ObjectId,
+     userId: ObjectId (ref: 'User'),
+     ingredient: ObjectId (ref: 'Ingredient'),
+     quantity: Number,
+     unit: String,
+     location: String,
+     expiryDate: Date,
+     minimumQuantity: Number,
+     createdAt: Date,
+     updatedAt: Date
+   }
+
+5. SHOPPING_LIST SCHEMA
+   {
+     _id: ObjectId,
+     userId: ObjectId (ref: 'User'),
+     name: String,
+     items: [{
+       ingredient: ObjectId (ref: 'Ingredient'),
+       quantity: Number,
+       unit: String,
+       notes: String,
+       completed: Boolean,
+       addToStock: Boolean
+     }],
+     status: String (enum: ['active', 'completed', 'archived']),
+     source: {
+       type: String (enum: ['manual', 'recipe', 'meal-plan']),
+       referenceId: ObjectId (optional)
+     },
+     sharedWith: [ObjectId (ref: 'User')],
+     createdAt: Date,
+     updatedAt: Date
+   }
+
+6. MEAL_PLAN SCHEMA
+   {
+     _id: ObjectId,
+     userId: ObjectId (ref: 'User'),
+     startDate: Date,
+     endDate: Date,
+     meals: [{
+       date: Date,
+       type: String (enum: ['breakfast', 'lunch', 'dinner', 'snack']),
+       recipe: ObjectId (ref: 'Recipe'),
+       servings: Number,
+       notes: String,
+       status: String (enum: ['planned', 'completed', 'skipped'])
+     }],
+     createdAt: Date,
+     updatedAt: Date
+   }
+
+7. TRANSACTION_HISTORY SCHEMA
+   {
+     _id: ObjectId,
+     userId: ObjectId (ref: 'User'),
+     type: String (enum: ['stock_add', 'stock_remove', 'stock_adjust']),
+     ingredient: ObjectId (ref: 'Ingredient'),
+     quantity: Number,
+     unit: String,
+     source: {
+       type: String (enum: ['manual', 'shopping_list', 'recipe_used']),
+       referenceId: ObjectId
+     },
+     createdAt: Date
+   } 
