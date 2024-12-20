@@ -1,0 +1,153 @@
+RECIPE-BOX USER FLOWS
+
+1. AUTHENTICATION FLOWS
+   1.1. User Registration
+        → User visits the site
+        → Clicks "Sign Up"
+        → Enters email and password
+        → Verifies email (optional)
+        → Completes initial profile setup
+        → Lands on dashboard
+
+   1.2. User Login
+        → User visits the site
+        → Clicks "Login"
+        → Enters credentials
+        → Redirects to last visited page or dashboard
+
+2. RECIPE MANAGEMENT FLOWS
+   2.1. Creating a Recipe
+        → User clicks "Create New Recipe"
+        → Enters basic recipe info (name, description, servings, time)
+        → Adds ingredients with:
+           - Ingredient name
+           - Amount
+           - Unit of measurement
+           - Optional notes
+        → Adds preparation steps
+        → Adds optional photo
+        → Saves recipe
+        → Views completed recipe
+
+   2.2. Recipe Search & Filtering
+        → User visits recipe list
+        → Can search by:
+           - Recipe name
+           - Ingredients
+           - Categories
+           - Cooking time
+        → Can filter by:
+           - Favorites
+           - Recently added
+           - Cooking time
+           - Difficulty level
+
+3. SHOPPING LIST FLOWS
+   3.1. Manual List Creation
+        → User creates new shopping list
+        → Adds items manually:
+           - Item name
+           - Quantity
+           - Unit
+           - Optional notes
+        → Saves list
+        → Can share list (optional)
+
+   3.2. Recipe-Based List Creation
+        → User selects recipe(s)
+        → System generates shopping list
+        → User can:
+           - Adjust quantities
+           - Remove items already in stock
+           - Add additional items
+        → Saves list
+
+   3.3. Shopping Process
+        → User opens active shopping list
+        → Checks off items while shopping
+        → Can mark entire list as purchased
+        → Option to update stock levels automatically
+
+4. STOCK MANAGEMENT FLOWS
+   4.1. Manual Stock Entry
+        → User adds new item to stock
+        → Enters:
+           - Item name
+           - Quantity
+           - Unit
+           - Expiry date (optional)
+           - Storage location (optional)
+        → Saves item to inventory
+
+   4.2. Shopping List Integration
+        → After completing shopping list
+        → User confirms adding items to stock
+        → System updates inventory levels
+        → User can adjust quantities if needed
+
+   4.3. Stock Monitoring
+        → System tracks stock levels
+        → Alerts user when:
+           - Items are running low
+           - Items are approaching expiry
+        → User can set custom alert thresholds
+
+5. MEAL PLANNING FLOWS
+   5.1. Creating Meal Plan
+        → User opens meal planner
+        → Selects date range
+        → For each day/meal:
+           - Searches and selects recipes
+           - Or marks as "eating out"/"skip"
+        → System calculates total ingredients needed
+        → Option to generate shopping list
+
+   5.2. Stock-Based Recipe Suggestions
+        → User requests recipe suggestions
+        → System analyzes current stock
+        → Shows recipes that can be made:
+           - Completely from stock
+           - With minimal additional ingredients
+        → User can filter suggestions by:
+           - Meal type
+           - Cooking time
+           - Ingredients to use up
+
+6. INTEGRATION WORKFLOWS
+   6.1. Recipe to Shopping List
+        → User views recipe
+        → Clicks "Add to Shopping List"
+        → Selects existing list or creates new
+        → Adjusts quantities if needed
+        → System adds items to list
+
+   6.2. Shopping List to Stock
+        → User completes shopping list
+        → Confirms adding to stock
+        → System updates inventory
+        → Creates transaction history
+
+   6.3. Stock to Meal Planning
+        → User plans meals
+        → System highlights recipes matching stock
+        → Warns about missing ingredients
+        → Option to add missing items to shopping list
+
+7. DATA MANAGEMENT FLOWS
+   7.1. Recipe Management
+        → Edit existing recipes
+        → Archive unused recipes
+        → Categorize and tag recipes
+        → Share recipes with other users
+
+   7.2. List Management
+        → View list history
+        → Reuse previous lists
+        → Share lists with household
+        → Archive completed lists
+
+   7.3. Stock Management
+        → Regular inventory checks
+        → Stock level adjustments
+        → Expiry date tracking
+        → Usage history tracking
