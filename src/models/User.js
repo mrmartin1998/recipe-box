@@ -7,7 +7,21 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  // ... rest of schema definition
+  password: {
+    type: String,
+    required: true
+  },
+  name: String,
+  preferences: {
+    measurementUnit: String,  // metric/imperial
+    theme: String,
+    notifications: {
+      lowStock: Boolean,
+      expiryWarning: Boolean
+    }
+  }
+}, {
+  timestamps: true  // This adds createdAt and updatedAt
 });
 
 // Create and export the model (database interface)

@@ -1,6 +1,6 @@
-RECIPE-BOX DATA STRUCTURES
+RECIPE-BOX DATA MODELS
 
-1. USER SCHEMA
+1. USER MODEL
    {
      _id: ObjectId,
      email: String (required, unique),
@@ -18,7 +18,7 @@ RECIPE-BOX DATA STRUCTURES
      }
    }
 
-2. RECIPE SCHEMA
+2. RECIPE MODEL
    {
      _id: ObjectId,
      userId: ObjectId (ref: 'User'),
@@ -48,7 +48,7 @@ RECIPE-BOX DATA STRUCTURES
      updatedAt: Date
    }
 
-3. INGREDIENT SCHEMA
+3. INGREDIENT MODEL
    {
      _id: ObjectId,
      name: String (required),
@@ -65,7 +65,7 @@ RECIPE-BOX DATA STRUCTURES
      updatedAt: Date
    }
 
-4. STOCK SCHEMA
+4. STOCK MODEL
    {
      _id: ObjectId,
      userId: ObjectId (ref: 'User'),
@@ -79,7 +79,7 @@ RECIPE-BOX DATA STRUCTURES
      updatedAt: Date
    }
 
-5. SHOPPING_LIST SCHEMA
+5. SHOPPING_LIST MODEL
    {
      _id: ObjectId,
      userId: ObjectId (ref: 'User'),
@@ -102,7 +102,7 @@ RECIPE-BOX DATA STRUCTURES
      updatedAt: Date
    }
 
-6. MEAL_PLAN SCHEMA
+6. MEAL_PLAN MODEL
    {
      _id: ObjectId,
      userId: ObjectId (ref: 'User'),
@@ -120,7 +120,7 @@ RECIPE-BOX DATA STRUCTURES
      updatedAt: Date
    }
 
-7. TRANSACTION_HISTORY SCHEMA
+7. TRANSACTION_HISTORY MODEL
    {
      _id: ObjectId,
      userId: ObjectId (ref: 'User'),
