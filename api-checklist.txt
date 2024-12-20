@@ -1,0 +1,167 @@
+RECIPE-BOX API CHECKLIST
+
+1. AUTHENTICATION APIs
+   1.1. POST /api/auth/register
+       - Purpose: Create new user account
+       - Input: { email, password, name }
+       - Output: { user, token }
+       - Test Case:
+         Mock Data: {
+           "email": "test@example.com",
+           "password": "securePass123",
+           "name": "Test User"
+         }
+
+   1.2. POST /api/auth/login
+       - Purpose: Authenticate user
+       - Input: { email, password }
+       - Output: { user, token }
+       - Test Case:
+         Mock Data: {
+           "email": "test@example.com",
+           "password": "securePass123"
+         }
+
+2. RECIPE APIs
+   2.1. POST /api/recipes
+       - Purpose: Create new recipe
+       - Auth: Required
+       - Input: { name, description, servings, prepTime, cookTime, difficulty, ingredients[], steps[] }
+       - Output: { recipe }
+       - Test Case:
+         Mock Data: {
+           "name": "Spaghetti Carbonara",
+           "description": "Classic Italian pasta dish",
+           "servings": 4,
+           "prepTime": 15,
+           "cookTime": 20,
+           "difficulty": "medium",
+           "ingredients": [
+             {
+               "item": "ingredient_id_pasta",
+               "amount": 500,
+               "unit": "g",
+               "notes": "spaghetti"
+             }
+           ],
+           "steps": [
+             {
+               "order": 1,
+               "description": "Boil pasta",
+               "timer": 10
+             }
+           ]
+         }
+
+   2.2. GET /api/recipes
+       - Purpose: List/search recipes
+       - Auth: Required
+       - Query Params: { search, category, difficulty, page, limit }
+       - Output: { recipes[], total, page, limit }
+
+   2.3. GET /api/recipes/:id
+       - Purpose: Get recipe details
+       - Auth: Required
+       - Output: { recipe }
+
+   2.4. PUT /api/recipes/:id
+       - Purpose: Update recipe
+       - Auth: Required
+       - Input: { recipe data }
+       - Output: { updated recipe }
+
+   2.5. DELETE /api/recipes/:id
+       - Purpose: Delete recipe
+       - Auth: Required
+       - Output: { success }
+
+3. INGREDIENT APIs
+   3.1. POST /api/ingredients
+       - Purpose: Create new ingredient
+       - Auth: Required
+       - Input: { name, category, defaultUnit, alternativeUnits[], nutritionalInfo }
+       - Output: { ingredient }
+
+   3.2. GET /api/ingredients
+       - Purpose: List/search ingredients
+       - Auth: Required
+       - Query Params: { search, category }
+       - Output: { ingredients[] }
+
+4. SHOPPING LIST APIs
+   4.1. POST /api/shopping-lists
+       - Purpose: Create shopping list
+       - Auth: Required
+       - Input: { name, items[] }
+       - Output: { list }
+
+   4.2. POST /api/shopping-lists/from-recipe/:recipeId
+       - Purpose: Generate list from recipe
+       - Auth: Required
+       - Input: { servings }
+       - Output: { list }
+
+   4.3. PUT /api/shopping-lists/:id/items/:itemId
+       - Purpose: Update item status
+       - Auth: Required
+       - Input: { completed, addToStock }
+       - Output: { updated item }
+
+5. STOCK APIs
+   5.1. POST /api/stock
+       - Purpose: Add stock item
+       - Auth: Required
+       - Input: { ingredient, quantity, unit, location, expiryDate, minimumQuantity }
+       - Output: { stock item }
+
+   5.2. GET /api/stock
+       - Purpose: List stock items
+       - Auth: Required
+       - Query Params: { search, location, lowStock }
+       - Output: { stock items[] }
+
+   5.3. PUT /api/stock/:id
+       - Purpose: Update stock levels
+       - Auth: Required
+       - Input: { quantity, unit }
+       - Output: { updated stock }
+
+6. MEAL PLAN APIs
+   6.1. POST /api/meal-plans
+       - Purpose: Create meal plan
+       - Auth: Required
+       - Input: { startDate, endDate, meals[] }
+       - Output: { meal plan }
+
+   6.2. GET /api/meal-plans/suggestions
+       - Purpose: Get recipe suggestions based on stock
+       - Auth: Required
+       - Query Params: { mealType, maxPrepTime }
+       - Output: { recipes[] }
+
+7. INTEGRATION APIs
+   7.1. POST /api/shopping-lists/:id/to-stock
+       - Purpose: Convert completed shopping list to stock
+       - Auth: Required
+       - Output: { updated stock items[] }
+
+   7.2. GET /api/recipes/possible
+       - Purpose: Get recipes possible with current stock
+       - Auth: Required
+       - Output: { recipes[] }
+
+Testing Strategy:
+1. Create test suite for each API endpoint
+2. Test authentication and authorization
+3. Test input validation
+4. Test error handling
+5. Test integration between related endpoints
+6. Test performance with larger datasets
+
+Mock Data Requirements:
+1. Create set of test users
+2. Create sample recipes with various complexities
+3. Create standard ingredient library
+4. Create sample shopping lists
+5. Create sample stock inventory
+6. Create sample meal plans
