@@ -40,6 +40,10 @@ const shoppingListSchema = new mongoose.Schema({
   isArchived: {
     type: Boolean,
     default: false
+  },
+  fromMealPlan: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'MealPlan'
   }
 }, {
   timestamps: true
