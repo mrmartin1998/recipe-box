@@ -151,14 +151,63 @@ RECIPE-BOX PROJECT ROADMAP
       - Test active states
       - Verify mobile drawer
 
-   6.2. Phase 2: Recipe Interface
-        - Recipe card components
-        - Recipe creation form
-        - Ingredient selector
-        - Step-by-step editor
-        - Recipe detail view
-        - Recipe search & filters
-        - Category tags
+   6.2. Phase 2: Recipe Interface (Detailed Steps)
+
+      Step 1: Recipe List & Cards
+      - Create recipe card component
+      - Add recipe grid layout
+      - Implement recipe thumbnail handling
+      - Add favorite/bookmark feature
+      - Test responsive grid
+      - Add loading states
+
+      Step 2: Recipe Creation Flow
+      - Create multi-step form layout
+      - Add basic info form (name, description, time, servings)
+      - Implement photo upload
+      - Test form validation
+      - Add save draft functionality
+      - Verify API integration
+
+      Step 3: Ingredient Management
+      - Create ingredient input component
+      - Add unit selector
+      - Implement quantity input
+      - Add ingredient notes field
+      - Create ingredient list manager
+      - Test bulk ingredient actions
+
+      Step 4: Step-by-Step Editor
+      - Create step editor component
+      - Add step reordering
+      - Implement step timing
+      - Add step notes/tips
+      - Create step preview
+      - Test step validation
+
+      Step 5: Recipe Detail View
+      - Create detail layout
+      - Add ingredient scaling
+      - Implement cooking mode
+      - Add sharing options
+      - Create print view
+      - Test mobile layout
+
+      Step 6: Search & Filters
+      - Add search bar component
+      - Implement filter sidebar
+      - Create category selector
+      - Add sorting options
+      - Implement saved searches
+      - Test search performance
+
+      Step 7: Category System
+      - Create category manager
+      - Add tag input component
+      - Implement category filters
+      - Add category colors
+      - Create category overview
+      - Test category assignment
 
    6.3. Phase 3: Shopping List Interface
         - Shopping list view
