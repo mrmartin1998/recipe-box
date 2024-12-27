@@ -9,10 +9,9 @@ export async function POST(request, { params }) {
     try {
       await connectToDatabase();
       
-      const recipeId = await params.recipeId;
       const { servings } = await req.json();
       
-      const recipe = await Recipe.findById(recipeId)
+      const recipe = await Recipe.findById(params.id)
         .populate('ingredients.item', 'name defaultUnit');
 
       if (!recipe) {
@@ -40,6 +39,7 @@ export async function POST(request, { params }) {
         servings
       });
 
+      await shoppingList.populate('items.ingredient', 'name defaultUnit');
       return NextResponse.json({ shoppingList });
 
     } catch (error) {

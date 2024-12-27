@@ -1,283 +1,350 @@
-Case Studies for Recipe Box API Testing
+Complete User Journey Test Flow
 
-Case 1: Basic Weekly Meal Planning
-    Story:
-        John, a busy parent, is starting to use Recipe Box to organize his family's meals. 
-        It's Sunday evening, and he wants to plan the week's dinners (March 18-24, 2024). 
-        He has some favorite recipes already in the system:
-        - Spaghetti Carbonara (ID: 676584a7dc6b63dc4d3cc657)
-        - Chicken Stir Fry (ID: 676584a7dc6b63dc4d3cc658)
-        - Beef Tacos (ID: 676584a7dc6b63dc4d3cc659)
-        
-        His current stock includes:
-        - Spaghetti: 500g
-        - Eggs: 6
-        - Parmesan: 200g
-        - Chicken breast: 300g
-        - Various vegetables
-        
-        He needs to:
-        1. Create a meal plan for 4 people
-        2. Check his existing stock
-        3. Generate a shopping list
-        4. Update stock after shopping
+1. Register New User
+    POST /api/auth/register
+    {
+        "name": "John Smith",
+        "email": "john@example.com",
+        "password": "secure_password"
+    }
 
-    Technical Flow:
-        1. Authentication:
-            POST /api/auth/login
+2. Login
+    POST /api/auth/login
+    {
+        "email": "john@example.com",
+        "password": "secure_password"
+    }
+    → Save JWT token for subsequent requests
+
+3. Create Basic Ingredients
+    POST /api/ingredients (multiple calls)
+    a. Create Spaghetti
+    {
+        "name": "spaghetti",
+        "category": "pasta",
+        "defaultUnit": "g",
+        "isPublic": true
+    }
+    → Save SPAGHETTI_ID from response
+
+    b. Create Eggs
+    {
+        "name": "eggs",
+        "category": "dairy",
+        "defaultUnit": "whole",
+        "isPublic": true
+    }
+    → Save EGGS_ID from response
+
+    c. Create Parmesan
+    {
+        "name": "parmesan",
+        "category": "dairy",
+        "defaultUnit": "g",
+        "isPublic": true
+    }
+    → Save PARMESAN_ID from response
+
+    d. Create Bacon
+    {
+        "name": "bacon",
+        "category": "meat",
+        "defaultUnit": "g",
+        "isPublic": true
+    }
+    → Save BACON_ID from response
+
+    e. Create Black Pepper
+    {
+        "name": "black pepper",
+        "category": "spices",
+        "defaultUnit": "tsp",
+        "isPublic": true
+    }
+    → Save BLACK_PEPPER_ID from response
+
+    f. Create Salt
+    {
+        "name": "salt",
+        "category": "spices",
+        "defaultUnit": "tsp",
+        "isPublic": true
+    }
+    → Save SALT_ID from response
+
+4. Verify Ingredients
+    GET /api/ingredients
+    Query params: { category: "pasta" }
+    → Confirm all ingredients are in system
+
+    GET /api/ingredients
+    Query params: { category: "dairy" }
+    → Confirm dairy ingredients
+
+    GET /api/ingredients
+    Query params: { category: "meat" }
+    → Confirm meat ingredients
+
+    GET /api/ingredients
+    Query params: { category: "spices" }
+    → Confirm spice ingredients
+
+5. Create Recipe
+    POST /api/recipes
+    {
+        "name": "Spaghetti Carbonara",
+        "description": "A classic Italian pasta dish...",
+        "servings": 4,
+        "prepTime": 15,
+        "cookTime": 20,
+        "difficulty": "medium",
+        "ingredients": [
             {
-                "email": "john@example.com",
-                "password": "secure_password"
-            }
-            → Returns JWT token for subsequent requests
-
-        2. Create Meal Plan:
-            POST /api/meal-plans
-            {
-                "startDate": "2024-03-18",
-                "endDate": "2024-03-24",
-                "meals": [
-                    {
-                        "recipe": "676584a7dc6b63dc4d3cc657",
-                        "date": "2024-03-18",
-                        "mealType": "dinner",
-                        "servings": 4
-                    },
-                    // Additional meals for the week...
-                ],
-                "notes": "Week 12 dinner plan"
-            }
-            → Returns created meal plan with ID
-
-        3. Verify Meal Plan:
-            GET /api/meal-plans/:id
-            → Returns complete meal plan with populated recipe details
-
-        4. Generate Shopping List:
-            POST /api/meal-plans/:id/shopping-list
-            → System calculates needed ingredients based on:
-              - Required ingredients for all meals
-              - Current stock levels
-              - Serving size adjustments
-
-        5. Stock Update After Shopping:
-            PUT /api/stock/:id
-            {
-                "quantity": 1000,
-                "unit": "g"
-            }
-            → Updates stock levels for each purchased item
-
-    Error Scenarios to Test:
-        1. Creating meal plan with invalid recipe IDs
-        2. Setting end date before start date
-        3. Requesting non-existent meal plan
-        4. Updating stock with invalid quantities
-        5. Authentication failures
-
-    Integration Points:
-        - Recipe → Meal Plan: Recipe details needed for meal planning
-        - Meal Plan → Shopping List: Ingredient calculations
-        - Shopping List → Stock: Inventory updates
-        - Stock → Recipe: Availability checking
-
-    Performance Considerations:
-        - Recipe lookup speed
-        - Shopping list generation time
-        - Stock update transaction speed
-
-Case 2: Recipe Management and Collaborative Shopping
-    Story:
-        Sarah is hosting a dinner party for 8 friends this weekend, including two vegetarians 
-        and one gluten-free guest. She shares shopping duties with her roommate Emma. 
-        She needs to:
-        - Create new recipes for dietary restrictions
-        - Plan multiple courses
-        - Coordinate shopping with Emma
-        
-        Current recipes to create:
-        - Gluten-free appetizer
-        - Vegetarian main course
-        - Standard main course
-        - Two side dishes
-        - Dessert
-
-        Initial stock check shows low levels of most items, requiring a major shopping trip.
-
-    Technical Flow:
-        1. Authentication (Both users):
-            POST /api/auth/login
-            {
-                "email": "sarah@example.com",
-                "password": "secure_password"
-            }
-            → Returns JWT tokens for both users
-
-        2. Create New Recipes:
-            POST /api/recipes
-            {
-                "name": "Quinoa Stuffed Peppers",
-                "category": "vegetarian",
-                "servings": 4,
-                "ingredients": [
-                    {
-                        "item": "67658487dc6b63dc4d3cc654",
-                        "amount": 200,
-                        "unit": "g"
-                    },
-                    // More ingredients...
-                ],
-                "instructions": [
-                    "Preheat oven to 375°F",
-                    // More steps...
-                ]
-            }
-            → Repeat for each new recipe
-
-        3. Check Current Stock:
-            GET /api/stock?lowStock=true
-            → Returns list of items below threshold
-
-        4. Create Meal Plan:
-            POST /api/meal-plans
-            {
-                "startDate": "2024-03-23",
-                "endDate": "2024-03-23",
-                "meals": [
-                    {
-                        "recipe": "NEW_RECIPE_ID",
-                        "mealType": "dinner",
-                        "servings": 8,
-                        "notes": "Vegetarian option"
-                    },
-                    // More meals...
-                ]
-            }
-
-        5. Generate and Share Shopping List:
-            POST /api/meal-plans/:id/shopping-list
-            → System generates comprehensive list
-
-        6. Real-time Shopping Updates (Both users):
-            PUT /api/shopping-lists/:id/items/:itemId
-            {
-                "completed": true,
-                "addToStock": true
-            }
-            → Updates shopping progress
-
-        7. Stock Updates:
-            POST /api/shopping-lists/:id/to-stock
-            → Automatically updates stock levels
-
-    Error Scenarios to Test:
-        1. Recipe creation with invalid ingredients
-        2. Concurrent shopping list updates
-        3. Stock updates with mismatched units
-        4. Invalid dietary category assignments
-        5. Permission issues between users
-
-    Integration Points:
-        - Recipe Creation → Meal Planning
-        - Shopping List → Multi-user Updates
-        - Shopping List → Stock Management
-        - Stock → Recipe Availability
-
-    Performance Considerations:
-        - Multi-user concurrent updates
-        - Recipe creation validation speed
-        - Shopping list sync between users
-
-Case 3: Large-Scale Meal Prep Operation
-    Story:
-        Mike runs a meal prep business preparing 200+ meals weekly across multiple locations.
-        He manages:
-        - Main Kitchen (primary prep location)
-        - Warehouse (bulk storage)
-        - 3 Satellite Kitchens
-        
-        This week he needs to:
-        - Plan 50 different meals
-        - Process bulk ingredients
-        - Maintain stock across locations
-        - Handle multiple concurrent meal preps
-        
-        Current situation:
-        - 20 standard recipes in rotation
-        - Bulk ingredients stored in warehouse
-        - Daily stock transfers between locations
-        - Multiple staff members updating systems
-
-    Technical Flow:
-        1. Initial System Check:
-            GET /api/stock?location=warehouse
-            GET /api/stock?location=main-kitchen
-            GET /api/stock?lowStock=true
-            → Inventory status across locations
-
-        2. Recipe Batch Planning:
-            GET /api/recipes?category=meal-prep
-            GET /api/meal-plans/suggestions?maxPrepTime=45
-            → Optimize recipe selection
-
-        3. Create Multiple Meal Plans:
-            POST /api/meal-plans
-            {
-                "startDate": "2024-03-18",
-                "endDate": "2024-03-24",
-                "location": "main-kitchen",
-                "meals": [
-                    // 50+ meal entries
-                ]
-            }
-            → Repeat for each location
-
-        4. Generate Consolidated Shopping Lists:
-            POST /api/meal-plans/:id/shopping-list
-            → Generate for each location
-            → Combine for warehouse ordering
-
-        5. Bulk Stock Management:
-            PUT /api/stock/:id
-            {
-                "quantity": 50000,
+                "item": "676a80f91bde6074c6de347d",
+                "amount": 400,
                 "unit": "g",
-                "location": "warehouse"
-            }
-            → Manage large quantity updates
-
-        6. Stock Transfers:
-            PUT /api/stock/:id
+                "notes": "spaghetti"
+            },
             {
-                "quantity": 5000,
+                "item": "676a811e1bde6074c6de3482",
+                "amount": 4,
+                "unit": "whole",
+                "notes": "large eggs"
+            },
+            {
+                "item": "676a81301bde6074c6de3486",
+                "amount": 100,
                 "unit": "g",
-                "location": "main-kitchen",
-                "transferFrom": "warehouse"
+                "notes": "freshly grated"
+            },
+            {
+                "item": "676a81461bde6074c6de348a",
+                "amount": 150,
+                "unit": "g",
+                "notes": "diced"
+            },
+            {
+                "item": "676a81571bde6074c6de348e",
+                "amount": 2,
+                "unit": "tsp",
+                "notes": "freshly ground"
+            },
+            {
+                "item": "676a81691bde6074c6de3492",
+                "amount": 1,
+                "unit": "tsp",
+                "notes": "for pasta water"
             }
-            → Track inter-location transfers
+        ],
+        "steps": [
+            {
+                "order": 1,
+                "description": "Boil pasta in salted water until al dente",
+                "timer": 10
+            },
+            {
+                "order": 2,
+                "description": "Cut bacon into small pieces and fry until crispy",
+                "timer": 8
+            },
+            {
+                "order": 3,
+                "description": "Beat eggs in a bowl and mix with grated parmesan cheese",
+                "timer": 0
+            },
+            {
+                "order": 4,
+                "description": "Drain pasta, reserving some pasta water",
+                "timer": 0
+            },
+            {
+                "order": 5,
+                "description": "While pasta is still hot, quickly stir in egg and cheese mixture",
+                "timer": 0
+            },
+            {
+                "order": 6,
+                "description": "Add crispy bacon and toss well",
+                "timer": 0
+            },
+            {
+                "order": 7,
+                "description": "Season with black pepper and salt to taste",
+                "timer": 0
+            },
+            {
+                "order": 8,
+                "description": "If needed, add a splash of reserved pasta water to create a creamy sauce",
+                "timer": 0
+            }
+        ]
+    }
+    → Save RECIPE_ID from response
+    
 
-    Error Scenarios to Test:
-        1. System performance with large datasets
-        2. Stock synchronization across locations
-        3. Concurrent stock updates
-        4. Bulk transaction failures
-        5. Location-based permission issues
+6. Verify Recipe
+    GET /api/recipes/RECIPE_ID
+    → Check recipe details and ingredients
 
-    Integration Points:
-        - Multi-location Stock Management
-        - Bulk Recipe Scaling
-        - Consolidated Shopping Lists
-        - Location-based Inventory Tracking
+7. Generate Shopping List from Recipe
+    POST /api/shopping-lists/recipe/RECIPE_ID
+    {
+        "servings": 4
+    }
+    → Get shopping list for ingredients
+    → Save SHOPPING_LIST_ID from response
 
-    Performance Considerations:
-        - Bulk data processing speed
-        - Multi-location synchronization
-        - Large dataset query optimization
-        - Concurrent user access handling
+8. View Shopping List Details
+    GET /api/shopping-lists/SHOPPING_LIST_ID
+    → Verify all items are present
 
-Each case will include:
-1. Initial Setup (authentication, initial data)
-2. Step-by-Step API Calls with Expected Responses
-3. Error Scenarios to Test
-4. Integration Points
-5. Performance Metrics to Monitor
+9. Update Shopping List Items & Stock
+    PUT /api/shopping-lists/items/ITEM_ID
+    {
+        "completed": true,
+        "addToStock": true
+    }
+    → Repeat for each item
+    → System should automatically add to stock
+
+10. Check Stock Levels
+    GET /api/stock
+    → Verify ingredients are in stock
+    GET /api/recipes/possible
+    → Check if recipe can be made
+
+11. Create Meal Plan
+    POST /api/meal-plans
+    {
+        "startDate": "2024-03-18",
+        "endDate": "2024-03-24",
+        "meals": [
+            {
+                "recipe": "RECIPE_ID",
+                "date": "2024-03-18",
+                "mealType": "dinner",
+                "servings": 4
+            }
+        ]
+    }
+    → Save MEAL_PLAN_ID from response
+
+12. Generate Shopping List from Meal Plan
+    POST /api/meal-plans/MEAL_PLAN_ID/shopping-list
+    → Get aggregated shopping list for all meals
+    → Save MEAL_PLAN_SHOPPING_LIST_ID from response
+
+13. Manage Meal Plan
+    a. View Meal Plan Details
+        GET /api/meal-plans/MEAL_PLAN_ID
+        → Check all meals are correctly listed
+    
+    b. Add New Meal to Plan
+        PUT /api/meal-plans/MEAL_PLAN_ID
+        {
+            "meals": [
+                {
+                    "recipe": "RECIPE_ID",
+                    "date": "2024-03-19",
+                    "mealType": "lunch",
+                    "servings": 2
+                }
+            ]
+        }
+    
+    c. Update Specific Meal
+        PUT /api/meal-plans/MEAL_PLAN_ID/meals/MEAL_ID
+        {
+            "servings": 3,
+            "notes": "Make extra for leftovers"
+        }
+    
+    d. Remove Meal from Plan
+        DELETE /api/meal-plans/MEAL_PLAN_ID/meals/MEAL_ID
+
+14. Manage Shopping Lists
+    a. View All Shopping Lists
+        GET /api/shopping-lists
+        → Should see both recipe and meal plan lists
+    
+    b. View Specific List
+        GET /api/shopping-lists/SHOPPING_LIST_ID
+        → Verify all items are present
+    
+    c. Update Items
+        PUT /api/shopping-lists/items/ITEM_ID
+        {
+            "completed": true,
+            "addToStock": true
+        }
+        → Repeat for each item
+        → Verify stock is updated
+
+15. Stock Management
+    a. View Current Stock
+        GET /api/stock
+        → Verify ingredients added from shopping list
+    
+    b. Check Low Stock
+        GET /api/stock
+        Query params: { lowStock: true }
+        → Identify items below minimum quantity
+    
+    c. Update Stock After Cooking
+        PUT /api/stock/STOCK_ID
+        {
+            "quantity": "REMAINING_AMOUNT",
+            "unit": "g"
+        }
+        → Update for each used ingredient
+
+16. Recipe Suggestions
+    a. Get Possible Recipes
+        GET /api/recipes/possible
+        → Check which recipes can be made with current stock
+    
+    b. Get Meal Plan Suggestions
+        GET /api/meal-plans/suggestions
+        Query params: { 
+            "mealType": "dinner",
+            "maxPrepTime": 30
+        }
+        → Get recipe suggestions based on stock
+
+17. Archive Management
+    a. Archive Shopping List
+        PUT /api/shopping-lists/SHOPPING_LIST_ID
+        {
+            "isArchived": true
+        }
+    
+    b. View Archived Lists
+        GET /api/shopping-lists
+        Query params: { archived: true }
+        → Verify archived lists are accessible
+
+Error Scenarios to Test at Each Step:
+1. Invalid registration data
+2. Wrong login credentials
+3. Duplicate ingredients
+4. Invalid recipe data
+5. Insufficient stock
+6. Invalid meal plan dates
+7. Stock updates with invalid quantities
+8. Unauthorized access to other users' shopping lists
+9. Invalid shopping list item IDs
+10. Invalid meal plan updates
+11. Overlapping meal plans
+12. Invalid stock quantities or units
+13. Missing required fields in all requests
+14. Invalid date formats
+15. Non-existent recipe references
+
+Success Criteria:
+1. All API endpoints return expected responses
+2. Data relationships are maintained
+3. Stock levels update correctly
+4. Shopping lists reflect accurate quantities
+5. Meal plans organize recipes correctly
+6. Authentication works consistently
+7. Error handling provides clear messages
