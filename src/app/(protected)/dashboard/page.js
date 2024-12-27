@@ -1,4 +1,6 @@
-export default function Home() {
+'use client'
+
+export default function Dashboard() {
   return (
     <main className="min-h-screen p-4">
       <div className="container mx-auto">
