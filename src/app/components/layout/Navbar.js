@@ -2,9 +2,23 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/app/contexts/AuthContext'
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const router = useRouter()
+  const { isLoggedIn, user, logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    router.push('/login')
+  }
+
+  const getInitials = (email) => {
+    return email?.charAt(0).toUpperCase() || 'U'
+  }
 
   return (
     <div className="navbar bg-base-100 shadow-lg">
@@ -31,7 +45,26 @@ export default function Navbar() {
         </ul>
       </div>
       <div className="navbar-end">
-        <Link href="/login" className="btn btn-primary">Login</Link>
+        {isLoggedIn ? (
+          <div className="dropdown dropdown-end">
+            <label 
+              tabIndex={0} 
+              className="btn btn-ghost btn-circle avatar placeholder"
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+            >
+              <div className="bg-primary text-primary-content rounded-full w-10">
+                <span>{getInitials(user?.email)}</span>
+              </div>
+            </label>
+            <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+              <li><Link href="/profile">Profile</Link></li>
+              <li><Link href="/settings">Settings</Link></li>
+              <li><button onClick={handleLogout}>Logout</button></li>
+            </ul>
+          </div>
+        ) : (
+          <Link href="/login" className="btn btn-primary">Login</Link>
+        )}
       </div>
     </div>
   )
