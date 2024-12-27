@@ -151,31 +151,47 @@ RECIPE-BOX PROJECT ROADMAP
       - Test active states
       - Verify mobile drawer
 
+      Step 7: Authentication Reorganization ⚠️ HIGH PRIORITY
+      - Consolidate auth files into single directory
+      - Create consistent token management
+      - Implement proper token refresh
+      - Add persistent sessions
+      - Test auth state consistency
+      - Add remember me functionality
+      - Verify mobile token handling
+
+      Step 8: Recipe Creation Flow
+      - Create multi-step form layout
+      - Add save draft functionality
+      
+      Step 9: Step-by-Step Editor
+      - Create step editor component
+      - Add step reordering
+      - Implement step timing
+      - Add step notes/tips
+      - Create step preview
+      - Test step validation
+
    6.2. Phase 2: Recipe Interface (Detailed Steps)
 
       Step 1: Recipe List & Cards
-      - Create recipe card component
-      - Add recipe grid layout
-      - Implement recipe thumbnail handling
-      - Add favorite/bookmark feature
-      - Test responsive grid
-      - Add loading states
+      - ✅ Create recipe card component
+      - ✅ Add recipe grid layout
+      - ✅ Implement recipe thumbnail handling
+      - ✅ Test responsive grid
+      - ✅ Add loading states
 
-      Step 2: Recipe Creation Flow
-      - Create multi-step form layout
-      - Add basic info form (name, description, time, servings)
-      - Implement photo upload
-      - Test form validation
-      - Add save draft functionality
-      - Verify API integration
+      Step 2: Recipe Creation Flow (Partial)
+      - ✅ Add basic info form (name, description, time, servings)
+      - ✅ Test form validation
+      - ✅ Verify API integration
 
-      Step 3: Ingredient Management
-      - Create ingredient input component
-      - Add unit selector
-      - Implement quantity input
-      - Add ingredient notes field
-      - Create ingredient list manager
-      - Test bulk ingredient actions
+      Step 3: Ingredient Management (Partial)
+      - ✅ Create ingredient input component
+      - ✅ Add unit selector
+      - ✅ Implement quantity input
+      - ✅ Add ingredient notes field
+      - ✅ Create ingredient list manager
 
       Step 4: Step-by-Step Editor
       - Create step editor component

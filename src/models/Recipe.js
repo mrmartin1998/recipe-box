@@ -58,6 +58,10 @@ const recipeSchema = new mongoose.Schema({
   isPublic: {
     type: Boolean,
     default: false
+  },
+  favorite: {
+    type: Boolean,
+    default: false
   }
 }, {
   timestamps: true
@@ -65,8 +69,5 @@ const recipeSchema = new mongoose.Schema({
 
 // Add indexes for better search performance
 recipeSchema.index({ name: 'text', description: 'text' });
-recipeSchema.index({ userId: 1 });
-recipeSchema.index({ category: 1 });
-recipeSchema.index({ difficulty: 1 });
 
 export const Recipe = mongoose.models.Recipe || mongoose.model('Recipe', recipeSchema); 

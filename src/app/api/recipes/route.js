@@ -3,6 +3,27 @@ import { withAuth } from '@/lib/authUtils';
 import { Recipe } from '@/models/Recipe';
 import { connectToDatabase } from '@/lib/mongodb';
 
+// GET /api/recipes - List recipes
+export async function GET(request) {
+  return withAuth(request, async (req) => {
+    try {
+      await connectToDatabase();
+      
+      const recipes = await Recipe.find({ userId: req.user._id })
+        .sort({ createdAt: -1 });
+
+      return NextResponse.json(recipes);
+
+    } catch (error) {
+      console.error('Recipe list error:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch recipes' },
+        { status: 500 }
+      );
+    }
+  });
+}
+
 // POST /api/recipes - Create new recipe
 export async function POST(request) {
   return withAuth(request, async (req) => {
@@ -54,66 +75,6 @@ export async function POST(request) {
       console.error('Recipe creation error:', error);
       return NextResponse.json(
         { error: 'Failed to create recipe' },
-        { status: 500 }
-      );
-    }
-  });
-}
-
-// GET /api/recipes - List/search recipes
-export async function GET(request) {
-  return withAuth(request, async (req) => {
-    try {
-      await connectToDatabase();
-      
-      const { searchParams } = new URL(req.url);
-      const search = searchParams.get('search');
-      const category = searchParams.get('category');
-      const difficulty = searchParams.get('difficulty');
-      const page = parseInt(searchParams.get('page') || '1');
-      const limit = parseInt(searchParams.get('limit') || '10');
-      const skip = (page - 1) * limit;
-
-      // Build query
-      const query = {
-        $or: [
-          { userId: req.user._id }, // User's own recipes
-          { isPublic: true }        // Public recipes
-        ]
-      };
-
-      // Add filters if provided
-      if (search) {
-        query.$text = { $search: search };
-      }
-      if (category) {
-        query.category = category;
-      }
-      if (difficulty) {
-        query.difficulty = difficulty;
-      }
-
-      // Execute query
-      const [recipes, total] = await Promise.all([
-        Recipe.find(query)
-          .skip(skip)
-          .limit(limit)
-          .sort({ createdAt: -1 }),
-        Recipe.countDocuments(query)
-      ]);
-
-      return NextResponse.json({
-        recipes,
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit)
-      });
-
-    } catch (error) {
-      console.error('Recipe list error:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch recipes' },
         { status: 500 }
       );
     }
