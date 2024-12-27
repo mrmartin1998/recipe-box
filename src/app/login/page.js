@@ -3,49 +3,32 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/app/contexts/AuthContext'
+import { useAuth } from '@/lib/auth'
+import { usePublicRoute } from '@/lib/auth'
 
 export default function Login() {
   const { login } = useAuth()
   const router = useRouter()
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
+    remember: false
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  usePublicRoute()
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setError('')
     setIsLoading(true)
+    setError('')
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed')
-      }
-
-      // Use the login function from auth context
-      login(formData.email, data.token)
-      
-      // Redirect to dashboard
+      await login(formData.email, formData.password, formData.remember)
       router.push('/dashboard')
     } catch (err) {
-      console.error('Login error:', err.message)
-      setError(err.message)
+      setError('Invalid email or password')
     } finally {
       setIsLoading(false)
     }

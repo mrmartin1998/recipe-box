@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { verifyToken } from '@/lib/auth'
 
 const protectedPaths = [
   '/dashboard',
@@ -12,7 +13,6 @@ const protectedPaths = [
 const publicPaths = ['/', '/login', '/register']
 
 export function middleware(request) {
-  // Instead of checking cookies, we'll check localStorage
   const { pathname } = request.nextUrl
   
   // Check if the path is protected
@@ -26,7 +26,6 @@ export function middleware(request) {
   )
 
   // For protected routes, we'll let the client-side handle the auth check
-  // This prevents the middleware redirect loop
   if (isProtectedPath) {
     return NextResponse.next()
   }

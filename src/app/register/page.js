@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/app/contexts/AuthContext'
+import { useAuth } from '@/lib/auth'
+import { usePublicRoute } from '@/lib/auth'
 
 export default function Register() {
   const { login } = useAuth()

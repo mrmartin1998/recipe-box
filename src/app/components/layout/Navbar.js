@@ -3,13 +3,13 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/app/contexts/AuthContext'
+import { useAuth } from '@/lib/auth'
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const router = useRouter()
-  const { isLoggedIn, user, logout } = useAuth()
+  const { user, logout } = useAuth()
 
   const handleLogout = () => {
     logout()
@@ -45,7 +45,7 @@ export default function Navbar() {
         </ul>
       </div>
       <div className="navbar-end">
-        {isLoggedIn ? (
+        {user ? (
           <div className="dropdown dropdown-end">
             <label 
               tabIndex={0} 

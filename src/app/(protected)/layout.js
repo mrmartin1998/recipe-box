@@ -1,24 +1,15 @@
 'use client'
 
-import { useAuth } from '@/app/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useProtectedRoute } from '@/lib/auth'
 
 export default function ProtectedLayout({ children }) {
-  const { isLoggedIn, isLoading } = useAuth()
-  const router = useRouter()
+  const { user, loading } = useProtectedRoute()
 
-  useEffect(() => {
-    if (!isLoading && !isLoggedIn) {
-      router.push('/login')
-    }
-  }, [isLoggedIn, isLoading, router])
-
-  if (isLoading) {
-    return <div>Loading...</div> // Or your loading component
+  if (loading) {
+    return <div>Loading...</div>
   }
 
-  if (!isLoggedIn) {
+  if (!user) {
     return null
   }
 
