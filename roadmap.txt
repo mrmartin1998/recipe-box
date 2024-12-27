@@ -131,11 +131,11 @@ RECIPE-BOX PROJECT ROADMAP
       - ✅ Verify redirect flows
 
       Step 4: Protected Routes
-      - Add auth middleware
-      - Test unauthorized access
-      - Add loading states
-      - Test token expiry
-      - Verify redirect behavior
+      - ✅ Add auth middleware
+      - ✅ Test unauthorized access
+      - ✅ Add loading states
+      - ✅ Test token expiry
+      - ✅ Verify redirect behavior
 
       Step 5: User Profile
       - Add profile dropdown
