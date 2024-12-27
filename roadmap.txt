@@ -138,11 +138,11 @@ RECIPE-BOX PROJECT ROADMAP
       - ✅ Verify redirect behavior
 
       Step 5: User Profile
-      - Add profile dropdown
-      - Test logout flow
-      - Add user settings
-      - Test preferences saving
-      - Verify mobile layout
+      - ✅ Add profile dropdown
+      - ✅ Test logout flow
+      - ✅ Add user settings
+      - ✅ Test preferences saving
+      - ✅ Verify mobile layout
 
       Step 6: Sidebar
       - Create collapsible sidebar
