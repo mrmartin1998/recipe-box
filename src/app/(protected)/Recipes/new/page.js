@@ -139,6 +139,29 @@ export default function NewRecipe() {
     }
   }
 
+  const handleIngredientSelect = (index, suggestion) => {
+    handleIngredientChange(index, 'name', suggestion.name)
+    handleIngredientChange(index, 'category', suggestion.category)
+    handleIngredientChange(index, 'unit', suggestion.defaultUnit || '')
+    
+    setSuggestedIngredients(prev => {
+      const newSuggestions = { ...prev }
+      delete newSuggestions[index]
+      return newSuggestions
+    })
+  }
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setSuggestedIngredients({})
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
+
   return (
     <main className="min-h-screen p-4">
       <div className="container mx-auto max-w-2xl">
@@ -256,22 +279,20 @@ export default function NewRecipe() {
                       className="input input-bordered"
                       value={ing.name}
                       onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
-                      placeholder="e.g., Spaghetti"
+                      onClick={(e) => e.stopPropagation()}
                       required
                     />
                     {suggestedIngredients[index]?.length > 0 && (
-                      <div className="absolute z-10 w-full bg-base-200 mt-1 rounded-md shadow-lg">
+                      <div 
+                        className="absolute z-10 w-full bg-base-200 mt-1 rounded-md shadow-lg"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <ul className="menu p-2">
                           {suggestedIngredients[index].map((suggestion) => (
                             <li key={suggestion._id}>
                               <button
                                 type="button"
-                                onClick={() => {
-                                  handleIngredientChange(index, 'name', suggestion.name)
-                                  handleIngredientChange(index, 'category', suggestion.category)
-                                  handleIngredientChange(index, 'unit', suggestion.defaultUnit || '')
-                                  setSuggestedIngredients({})
-                                }}
+                                onClick={() => handleIngredientSelect(index, suggestion)}
                                 className="py-2 px-4 hover:bg-base-300 w-full text-left"
                               >
                                 {suggestion.name} ({suggestion.category})
