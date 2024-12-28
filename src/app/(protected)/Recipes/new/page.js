@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 
 export default function NewRecipe() {
   const router = useRouter()
+  const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [ingredients, setIngredients] = useState([])
@@ -21,6 +22,10 @@ export default function NewRecipe() {
     cookTime: 30,
     difficulty: 'medium'
   })
+
+  const [steps, setSteps] = useState([
+    { description: '', timer: 0, notes: '' }
+  ])
 
   const searchSimilarIngredients = async (index, name) => {
     if (name.length < 2) return
@@ -65,64 +70,68 @@ export default function NewRecipe() {
     setSelectedIngredients(selectedIngredients.filter((_, i) => i !== index))
   }
 
+  const addStep = () => {
+    setSteps([...steps, { description: '', timer: 0, notes: '' }])
+  }
+
+  const updateStep = (index, field, value) => {
+    const newSteps = [...steps]
+    newSteps[index] = { ...newSteps[index], [field]: value }
+    setSteps(newSteps)
+  }
+
+  const removeStep = (index) => {
+    if (steps.length > 1) {
+      setSteps(steps.filter((_, i) => i !== index))
+    }
+  }
+
+  const moveStep = (index, direction) => {
+    if (
+      (direction === 'up' && index === 0) || 
+      (direction === 'down' && index === steps.length - 1)
+    ) return
+
+    const newSteps = [...steps]
+    const newIndex = direction === 'up' ? index - 1 : index + 1
+    ;[newSteps[index], newSteps[newIndex]] = [newSteps[newIndex], newSteps[index]]
+    setSteps(newSteps)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
 
-    // Validate ingredients
-    if (!selectedIngredients.length || !selectedIngredients[0].name) {
-      setError('At least one ingredient is required')
-      setIsLoading(false)
-      return
-    }
-
     try {
-      // First create ingredients if they don't exist
-      const token = localStorage.getItem('token')
-      const processedIngredients = await Promise.all(
-        selectedIngredients.map(async (ing) => {
-          const response = await fetch('/api/ingredients', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              name: ing.name.toLowerCase(),
-              category: ing.category,
-              defaultUnit: ing.unit
-            })
-          })
-          const data = await response.json()
-          return {
-            item: data.ingredient._id, // Use the created/existing ingredient's ID
-            amount: ing.amount,
-            unit: ing.unit,
-            notes: ing.notes
-          }
-        })
-      )
-
-      // Then create the recipe with the ingredient IDs
       const response = await fetch('/api/recipes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
           ...recipe,
-          ingredients: processedIngredients,
-          steps: [] // We'll add steps in the next iteration
+          ingredients: ingredients.map(ing => ({
+            item: ing.name,
+            amount: ing.amount,
+            unit: ing.unit,
+            notes: ing.notes,
+            category: ing.category
+          })),
+          steps: steps.map((step, index) => ({
+            order: index + 1,
+            description: step.description,
+            timer: step.timer,
+            notes: step.notes
+          }))
         })
       })
 
-      if (!response.ok) {
-        throw new Error('Failed to create recipe')
-      }
-
-      router.push('/recipes')
+      if (!response.ok) throw new Error('Failed to create recipe')
+      
+      const data = await response.json()
+      router.push(`/recipes/${data.recipe._id}`)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -354,6 +363,97 @@ export default function NewRecipe() {
                     Remove
                   </button>
                 )}
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-semibold">Steps</h2>
+              <button
+                type="button"
+                className="btn btn-sm btn-outline"
+                onClick={addStep}
+              >
+                Add Step
+              </button>
+            </div>
+
+            {steps.map((step, index) => (
+              <div key={index} className="card bg-base-200 p-4">
+                <div className="space-y-4">
+                  <div className="form-control">
+                    <label className="label">
+                      <span className="label-text">Step {index + 1}</span>
+                    </label>
+                    <textarea
+                      className="textarea textarea-bordered"
+                      value={step.description}
+                      onChange={(e) => updateStep(index, 'description', e.target.value)}
+                      placeholder="Describe this step..."
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Timer (minutes)</span>
+                      </label>
+                      <input
+                        type="number"
+                        className="input input-bordered"
+                        value={step.timer}
+                        onChange={(e) => updateStep(index, 'timer', parseInt(e.target.value) || 0)}
+                        min="0"
+                      />
+                    </div>
+
+                    <div className="form-control">
+                      <label className="label">
+                        <span className="label-text">Notes</span>
+                      </label>
+                      <input
+                        type="text"
+                        className="input input-bordered"
+                        value={step.notes}
+                        onChange={(e) => updateStep(index, 'notes', e.target.value)}
+                        placeholder="Optional tips or notes"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <div className="space-x-2">
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        onClick={() => moveStep(index, 'up')}
+                        disabled={index === 0}
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        onClick={() => moveStep(index, 'down')}
+                        disabled={index === steps.length - 1}
+                      >
+                        ↓
+                      </button>
+                    </div>
+
+                    {steps.length > 1 && (
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-error"
+                        onClick={() => removeStep(index)}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

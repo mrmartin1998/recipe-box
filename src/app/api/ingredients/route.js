@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { withAuth } from '@/lib/authUtils';
+import { withAuth } from '@/lib/auth';
 import { Ingredient } from '@/models/Ingredient';
 import { connectToDatabase } from '@/lib/mongodb';
 
@@ -53,32 +53,24 @@ export async function GET(request) {
     try {
       await connectToDatabase();
       
-      const { searchParams } = new URL(req.url);
+      const { searchParams } = new URL(request.url);
       const search = searchParams.get('search');
-      const category = searchParams.get('category');
-
-      // Build query
-      const query = {
-        $or: [
-          { userId: req.user._id },
-          { isPublic: true }
-        ]
-      };
-
+      
+      let query = {};
       if (search) {
-        query.$text = { $search: search };
-      }
-      if (category) {
-        query.category = category;
+        query.name = { $regex: search, $options: 'i' };
       }
 
-      const ingredients = await Ingredient.find(query).sort({ name: 1 });
+      const ingredients = await Ingredient.find(query)
+        .limit(10)
+        .sort({ name: 1 });
+
       return NextResponse.json({ ingredients });
 
     } catch (error) {
-      console.error('Ingredient list error:', error);
+      console.error('Ingredient search error:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch ingredients' },
+        { error: 'Failed to search ingredients' },
         { status: 500 }
       );
     }

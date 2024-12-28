@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { withAuth } from '@/lib/authUtils';
+import { withAuth } from '@/lib/auth';
 import { Stock } from '@/models/Stock';
 import { connectToDatabase } from '@/lib/mongodb';
 
